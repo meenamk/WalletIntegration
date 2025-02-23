@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Integration</title>
+    <!--<script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #walletAddress {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wallet Integration with Ethers.js</h1>
+    <button id="connect-button">Connect Wallet</button>
+    <p id="walletAddress"></p>    
+
+    <script>
+        document.getElementById("connect-button").addEventListener('click',event=>{
+            let account;
+            console.log(typeof window.ethereum);
+            if (typeof window.ethereum !== 'undefined') {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                console.log('Metamask is connected');
+                //getting first account from metamask
+                window.ethereum.request({ method: "eth_requestAccounts" }).then(accounts=>{
+                account=accounts[0];
+                console.log(account);});
+                //printing account balance
+                window.ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(balance => {
+			        console.log(balance);
+		        });
+        }else {
+                console.error('Metamask is not installed or not connected');
+            }
+        });
+
+        const getAccountBalance = (account) => {
+		window.ethereum.request({method: 'eth_getBalance', params: [account, 'latest']})
+		.then(balance => {
+			setUserBalance(ethers.utils.formatEther(balance));
+		})
+		.catch(error => {
+			setErrorMessage(error.message);
+		});
+	};
+    </script>
+</body>
+</html>
